@@ -25,8 +25,10 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 
 // import routes
 const userRouter = require("./controllers/user.js");
+const shopRouter = require("./controllers/shop.js");
 
 app.use("/api/v2/user", userRouter);
+app.use("/api/v2/shop", shopRouter);
 
 app.use(ErrorHandler);
 

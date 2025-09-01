@@ -1,6 +1,5 @@
 const express = require("express");
 const path = require("path");
-const userRouter = express.Router();
 const User = require("../models/user.js");
 const { upload } = require("../multer.js");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors.js");
@@ -10,6 +9,8 @@ const sendToken = require("../utils/jwtToken.js");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const { isAuthenticated } = require("../middlewares/auth.js");
+
+const userRouter = express.Router();
 
 userRouter.post(
   "/create-user",
@@ -151,6 +152,27 @@ userRouter.get(
       res.status(200).json({
         success: true,
         user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+//logout
+userRouter.get(
+  "/logout",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      res.cookie("token", null, {
+        expires: new Date(Date.now()),
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+      });
+      res.status(201).json({
+        success: true,
+        message: "Log out successful!",
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
