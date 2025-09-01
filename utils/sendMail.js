@@ -15,7 +15,8 @@ const sendMail = async (options) => {
     from: process.env.SMTP_MAIL,
     to: options.email,
     subject: options.subject,
-    text: options.message,
+    // Prefer html if provided, fallback to text
+    ...(options.html ? { html: options.html } : { text: options.message }),
   };
 
   await transporter.sendMail(mailOptions);

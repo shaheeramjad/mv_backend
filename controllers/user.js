@@ -9,6 +9,10 @@ const sendToken = require("../utils/jwtToken.js");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const { isAuthenticated } = require("../middlewares/auth.js");
+const {
+  activationTemplate,
+  congratulationsTemplate,
+} = require("../utils/emailTemplates.js");
 
 const userRouter = express.Router();
 
@@ -49,7 +53,11 @@ userRouter.post(
         await sendMail({
           email: user.email,
           subject: "Activate your account",
-          message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
+          html: activationTemplate({
+            name: user.name,
+            activationUrl,
+            type: "user",
+          }),
         });
         res.status(201).json({
           success: true,
@@ -100,6 +108,19 @@ userRouter.post(
       });
 
       sendToken(user, 201, res);
+      try {
+        await sendMail({
+          email: email,
+          subject: "Congratulations on your Account",
+          html: congratulationsTemplate({ name: name, type: "user" }),
+        });
+        res.status(201).json({
+          success: true,
+          message: `Congratulations ${name}, Your Account Has Been Created Successfully!`,
+        });
+      } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+      }
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }

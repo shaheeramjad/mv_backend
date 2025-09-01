@@ -9,6 +9,10 @@ const shopToken = require("../utils/shopToken.js");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const { isSeller } = require("../middlewares/auth.js");
+const {
+  activationTemplate,
+  congratulationsTemplate,
+} = require("../utils/emailTemplates.js");
 
 const shopRouter = express.Router();
 
@@ -50,7 +54,11 @@ shopRouter.post(
         await sendMail({
           email: email,
           subject: "Activate your Shop",
-          message: `Hello ${seller.name}, please click on the link to activate your shop: ${activationUrl}`,
+          html: activationTemplate({
+            name: seller.name,
+            activationUrl,
+            type: "shop",
+          }),
         });
         res.status(201).json({
           success: true,
@@ -111,7 +119,7 @@ shopRouter.post(
         await sendMail({
           email: email,
           subject: "Congratulations on your Shop",
-          message: `Hello ${name}, Your Shop Has Been Created Successfully!`,
+          html: congratulationsTemplate({ name: name, type: "shop" }),
         });
         res.status(201).json({
           success: true,
