@@ -1,6 +1,7 @@
 const express = require("express");
 const Product = require("../models/product");
 const Shop = require("../models/shop");
+const Order = require("../models/order");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { upload } = require("../multer");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors.js");

@@ -1,6 +1,3 @@
-const app = require("./app");
-const connectDatabase = require("./db/Database");
-
 //Handling Uncaught Exceptions
 process.on("uncaughtException", (err) => {
   console.log("Uncaught Exception:", err);
@@ -13,6 +10,9 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
     path: "./config/.env",
   });
 }
+
+const app = require("./app");
+const connectDatabase = require("./db/Database");
 
 //db server
 connectDatabase();
