@@ -31,6 +31,7 @@ const eventRouter = require("./controllers/event.js");
 const couponRouter = require("./controllers/couponCode.js");
 const paymentRouter = require("./controllers/payment.js");
 const orderRouter = require("./controllers/order.js");
+const withdrawRouter = require("./controllers/withdraw.js");
 
 app.use("/api/v2/user", userRouter);
 app.use("/api/v2/shop", shopRouter);
@@ -39,6 +40,7 @@ app.use("/api/v2/event", eventRouter);
 app.use("/api/v2/coupon", couponRouter);
 app.use("/api/v2/payment", paymentRouter);
 app.use("/api/v2/order", orderRouter);
+app.use("/api/v2/withdraw", withdrawRouter);
 
 app.use(ErrorHandler);
 

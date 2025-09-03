@@ -207,7 +207,7 @@ orderRouter.put(
 
       res.status(200).json({
         success: true,
-        message: "Order Refund successfull!",
+        message: "Order Refund successful!",
       });
 
       if (req.body.status === "Refund Success") {
@@ -224,27 +224,6 @@ orderRouter.put(
 
         await product.save({ validateBeforeSave: false });
       }
-    } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
-    }
-  })
-);
-
-// all orders --- for admin
-orderRouter.get(
-  "/admin-all-orders",
-  isAuthenticated,
-  isAdmin("Admin"),
-  catchAsyncErrors(async (req, res, next) => {
-    try {
-      const orders = await Order.find().sort({
-        deliveredAt: -1,
-        createdAt: -1,
-      });
-      res.status(201).json({
-        success: true,
-        orders,
-      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
