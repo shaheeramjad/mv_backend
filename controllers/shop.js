@@ -1,14 +1,18 @@
 const express = require("express");
 const path = require("path");
 const Shop = require("../models/shop.js");
-const { upload } = require("../multer.js");
+const cloudinary = require("cloudinary");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors.js");
 const ErrorHandler = require("../utils/ErrorHandler.js");
 const sendMail = require("../utils/sendMail.js");
 const shopToken = require("../utils/shopToken.js");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
-const { isSeller } = require("../middlewares/auth.js");
+const {
+  isSeller,
+  isAuthenticated,
+  isAdmin,
+} = require("../middlewares/auth.js");
 const {
   activationTemplate,
   congratulationsTemplate,
@@ -16,62 +20,55 @@ const {
 
 const shopRouter = express.Router();
 
-shopRouter.post(
-  "/create-shop",
-  upload.single("file"),
-  async (req, res, next) => {
-    try {
-      const { email } = req.body;
-      const fileName = req.file.filename;
-      const sellerEmail = await Shop.findOne({ email });
-      if (sellerEmail) {
-        const fileUrl = path.join(fileName);
-        fs.unlink(fileUrl, (err) => {
-          if (err) {
-            console.error("Error deleting file:", err);
-          }
-        });
-        return next(new ErrorHandler("Shop already Exist"));
-      }
-
-      const seller = {
-        name: req.body.name,
-        email: email,
-        password: req.body.password,
-        avatar: {
-          public_id: fileName,
-          url: fileName,
-        },
-        address: req.body.address,
-        phoneNumber: req.body.phoneNumber,
-        zipCode: req.body.zipCode,
-      };
-
-      const activationToken = createActivationToken(seller);
-      const activationUrl = `http://localhost:5173/seller/activation/${activationToken}`;
-
-      try {
-        await sendMail({
-          email: email,
-          subject: "Activate your Shop",
-          html: activationTemplate({
-            name: seller.name,
-            activationUrl,
-            type: "shop",
-          }),
-        });
-        res.status(201).json({
-          success: true,
-          message: `Please check your email ${email} for activation link`,
-        });
-      } catch (error) {
-        return next(new ErrorHandler(error.message, 500));
-      }
-    } catch (error) {
-      return next(new ErrorHandler(error.message, 400));
+shopRouter.post("/create-shop", async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const sellerEmail = await Shop.findOne({ email });
+    if (sellerEmail) {
+      return next(new ErrorHandler("User already exists", 400));
     }
+
+    const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+      folder: "avatars",
+    });
+
+    const seller = {
+      name: req.body.name,
+      email: email,
+      password: req.body.password,
+      avatar: {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      },
+      address: req.body.address,
+      phoneNumber: req.body.phoneNumber,
+      zipCode: req.body.zipCode,
+    };
+
+    const activationToken = createActivationToken(seller);
+    const activationUrl = `http://localhost:5173/seller/activation/${activationToken}`;
+
+    try {
+      await sendMail({
+        email: email,
+        subject: "Activate your Shop",
+        html: activationTemplate({
+          name: seller.name,
+          activationUrl,
+          type: "shop",
+        }),
+      });
+      res.status(201).json({
+        success: true,
+        message: `Please check your email ${email} for activation link`,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 400));
   }
-);
+});
 
 //create activation token
 const createActivationToken = (seller) => {
@@ -297,6 +294,53 @@ shopRouter.delete(
       res.status(201).json({
         success: true,
         seller,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// all sellers --- for admin
+shopRouter.get(
+  "/admin-all-sellers",
+  isAuthenticated,
+  isAdmin("Admin"),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const sellers = await Shop.find().sort({
+        createdAt: -1,
+      });
+      res.status(201).json({
+        success: true,
+        sellers,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// delete seller ---admin
+shopRouter.delete(
+  "/delete-seller/:id",
+  isAuthenticated,
+  isAdmin("Admin"),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const seller = await Shop.findById(req.params.id);
+
+      if (!seller) {
+        return next(
+          new ErrorHandler("Seller is not available with this id", 400)
+        );
+      }
+
+      await Shop.findByIdAndDelete(req.params.id);
+
+      res.status(201).json({
+        success: true,
+        message: "Seller deleted successfully!",
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
