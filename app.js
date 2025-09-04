@@ -7,7 +7,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["https://mv-frontend-sandy.vercel.app"],
+    origin: ["https://mv-frontend-sandy.vercel.app", "http://localhost:5173"],
     credentials: true,
   })
 );

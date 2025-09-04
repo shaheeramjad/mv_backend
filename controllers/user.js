@@ -18,7 +18,7 @@ const userRouter = express.Router();
 
 userRouter.post("/create-user", async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, avatar } = req.body;
 
     const userEmail = await User.findOne({ email });
     if (userEmail) {
