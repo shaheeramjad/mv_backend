@@ -7,7 +7,7 @@ function activationTemplate({ name, activationUrl, type = "user" }) {
     <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
       
       <!-- Header -->
-      <div style="background: linear-gradient(135deg, #3321c8, #5a3eff); padding: 30px;">
+      <div style="background: linear-gradient(135deg, #f05518, #5a3eff); padding: 30px;">
         <h1 style="color: #fff; margin: 0; font-size: 26px;">Welcome to ${brand} 🎉</h1>
       </div>
 
@@ -19,7 +19,7 @@ function activationTemplate({ name, activationUrl, type = "user" }) {
         </p>
         
         <div style="text-align: center; margin: 35px 0;">
-          <a href="${activationUrl}" style="background: #3321c8; color: #fff; padding: 14px 34px; border-radius: 6px; text-decoration: none; font-size: 16px; font-weight: 600; display: inline-block;">
+          <a href="${activationUrl}" style="background: #f05518; color: #fff; padding: 14px 34px; border-radius: 6px; text-decoration: none; font-size: 16px; font-weight: 600; display: inline-block;">
             Activate My Account
           </a>
         </div>
@@ -46,7 +46,7 @@ function congratulationsTemplate({ name, type = "user" }) {
     <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
       
       <!-- Header -->
-      <div style="background: linear-gradient(135deg, #17dd1f, #00c853); padding: 30px;">
+      <div style="background: linear-gradient(135deg, #14562f, #00c853); padding: 30px;">
         <h1 style="color: #fff; margin: 0; font-size: 26px;">🎊 Congratulations!</h1>
       </div>
 
@@ -58,7 +58,7 @@ function congratulationsTemplate({ name, type = "user" }) {
         </p>
         
         <div style="text-align: center; margin: 35px 0;">
-          <span style="display: inline-block; background: #3321c8; color: #fff; padding: 14px 30px; border-radius: 6px; font-size: 16px; font-weight: 600;">
+          <span style="display: inline-block; background: #f05518; color: #fff; padding: 14px 30px; border-radius: 6px; font-size: 16px; font-weight: 600;">
             Start Exploring 🚀
           </span>
         </div>
@@ -101,7 +101,7 @@ function orderConfirmationTemplate({ name, totalPrice }) {
         </div>
 
         <div style="text-align: center; margin: 35px 0;">
-          <span style="display: inline-block; background: #3321c8; color: #fff; padding: 14px 30px; border-radius: 6px; font-size: 16px; font-weight: 600;">
+          <span style="display: inline-block; background: #f05518; color: #fff; padding: 14px 30px; border-radius: 6px; font-size: 16px; font-weight: 600;">
             View My Order 📦
           </span>
         </div>
