@@ -46,7 +46,7 @@ shopRouter.post("/create-shop", async (req, res, next) => {
     };
 
     const activationToken = createActivationToken(seller);
-    const activationUrl = `http://localhost:5173/seller/activation/${activationToken}`;
+    const activationUrl = `https://mv-frontend-sandy.vercel.app/seller/activation/${activationToken}`;
 
     try {
       await sendMail({

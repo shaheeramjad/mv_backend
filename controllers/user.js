@@ -39,7 +39,7 @@ userRouter.post("/create-user", async (req, res, next) => {
       },
     };
     const activationToken = createActivationToken(user);
-    const activationUrl = `http://localhost:5173/activation/${activationToken}`;
+    const activationUrl = `https://mv-frontend-sandy.vercel.app/activation/${activationToken}`;
     try {
       await sendMail({
         email: user.email,
